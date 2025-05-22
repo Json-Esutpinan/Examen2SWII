@@ -59,6 +59,8 @@ public class ProductoController {
         }
     }
 
+    //Test CI-CD
+
     @DeleteMapping ("/{id}")
     public ResponseEntity<Producto> deleteProduct(@PathVariable String id) {
         Producto deletedProducto = productoService.deleteProducto(id);
