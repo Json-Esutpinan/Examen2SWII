@@ -14,21 +14,20 @@ pipeline {
 
     // Define las herramientas que usará el pipeline
     tools {
-        maven MAVEN_HOME
-        jdk JAVA_HOME
+        maven 'Maven'
+        jdk 'JDK-17'
     }
 
     stages {
         stage('Checkout Code') { // Etapa para clonar el código fuente
             steps {
-                // Reemplaza con la URL de tu repositorio y el ID de tus credenciales de GitHub si es privado
                 git branch: 'main', url: 'https://github.com/Json-Esutpinan/Examen2SWII.git'
             }
         }
 
         stage('Build Application') { // Etapa para construir la aplicación con Maven
             steps {
-                sh "mvn clean install -DskipTests" // Construye el JAR, saltando los tests
+                sh "${MAVEN_HOME}/bin/mvn clean install -DskipTests" // Construye el JAR, saltando los tests
             }
         }
 
