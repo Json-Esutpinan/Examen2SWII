@@ -68,12 +68,10 @@
                     </runtime>
                     <auth>
                         <type>service_principal</type>
-                        <client>
                             <client_id>${env.AZURE_CLIENT_ID}</client_id>
                             <client_secret>${env.AZURE_CLIENT_SECRET}</client_secret>
                             <tenant_id>${env.AZURE_TENANT_ID}</tenant_id>
                             <subscription_id>${env.AZURE_SUBSCRIPTION_ID}</subscription_id>
-                        </client>
                     </auth>
                     <deployment>
                         <resources>
