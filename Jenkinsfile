@@ -21,6 +21,15 @@ pipeline {
             }
         }
 
+        stage('Copy Azure Auth File') {
+            steps {
+                // Si usas el plugin Config File Provider
+                configFileProvider([configFile(fileId: 'azure-auth-json', targetLocation: 'azureAuth.json')]) {
+                    echo 'Auth file copied'
+                }
+            }
+        }
+
         stage('Build Application') {
             steps {
                 sh "mvn clean install -DskipTests"
@@ -29,19 +38,7 @@ pipeline {
 
         stage('Deploy to Azure App Service') {
             steps {
-                withCredentials([azureServicePrincipal('azure-service-principal')]) {
-                    sh """
-                    mvn azure-webapp:deploy \
-                        -DresourceGroup=${AZURE_RESOURCE_GROUP} \
-                        -DappName=${AZURE_APP_NAME} \
-                        -Dregion='${AZURE_REGION}' \
-                        -Dazure.auth.type=service_principal \
-                        -Dazure.clientid=${AZURE_CLIENT_ID} \
-                        -Dazure.clientsecret=${AZURE_CLIENT_SECRET} \
-                        -Dazure.tenantid=${AZURE_TENANT_ID} \
-                        -Dazure.subscriptionid=${AZURE_SUBSCRIPTION_ID}
-                    """
-                }
+                sh "mvn azure-webapp:deploy"
             }
         }
     }
