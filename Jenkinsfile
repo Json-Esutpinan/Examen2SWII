@@ -32,11 +32,11 @@ pipeline {
                 configFileProvider([configFile(fileId: 'azure-auth-json', targetLocation: 'azureAuth.json')]) {
                     sh """
                         mvn azure-webapp:deploy \
+                            -Dazure.auth=file \
+                            -Dazure.auth.file=azureAuth.json \
                             -DresourceGroup=${AZURE_RESOURCE_GROUP} \
                             -DappName=${AZURE_APP_NAME} \
-                            -Dregion="${AZURE_REGION}" \
-                            -Dazure.auth=file \
-                            -Dazure.auth.file=azureAuth.json
+                            -Dregion="${AZURE_REGION}"
                     """
                 }
             }
