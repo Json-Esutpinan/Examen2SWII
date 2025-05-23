@@ -1,60 +1,57 @@
 pipeline {
-    agent any // Indica que el pipeline puede ejecutarse en cualquier agente Jenkins disponible
+    agent any
 
-    // Define variables de entorno para usar en el pipeline
     environment {
-        // Asegúrate de que estos valores coincidan con tus recursos de Azure
-        AZURE_RESOURCE_GROUP = 'SWII-CICD' // Reemplaza con tu grupo de recursos
-        AZURE_APP_NAME = 'productosjson' // Reemplaza con el nombre de tu App Service
-        AZURE_REGION = 'Canada Central' // Reemplaza con la región de tu App Service (ej. 'eastus', 'southcentralus')
-        MAVEN_HOME = tool 'Maven' // Nombre de la instalación de Maven configurada en Jenkins Global Tool Configuration
-        JAVA_HOME = tool 'JDK-17' // Nombre de la instalación de JDK 17 configurada
+        AZURE_RESOURCE_GROUP = 'SWII-CICD'
+        AZURE_APP_NAME = 'productosjson'
+        AZURE_REGION = 'Canada Central'
+        MAVEN_HOME = tool 'Maven'
+        JAVA_HOME = tool 'JDK-17'
     }
 
-    // Define las herramientas que usará el pipeline
     tools {
         maven 'Maven'
         jdk 'JDK-17'
     }
 
     stages {
-        stage('Checkout Code') { // Etapa para clonar el código fuente
+        stage('Checkout Code') {
             steps {
                 git branch: 'main', url: 'https://github.com/Json-Esutpinan/Examen2SWII.git'
             }
         }
 
-        stage('Build Application') { // Etapa para construir la aplicación con Maven
+        stage('Build Application') {
             steps {
-                sh "mvn clean install -DskipTests" // Construye el JAR, saltando los tests
+                sh "mvn clean install -DskipTests"
             }
         }
 
-        stage('Deploy to Azure App Service') { // Etapa para desplegar a Azure
+        stage('Deploy to Azure App Service') {
             steps {
                 withCredentials([azureServicePrincipal('azure-service-principal')]) {
-                sh "${MAVEN_HOME}/bin/mvn azure-webapp:deploy " +
-                   "-DresourceGroup=${AZURE_RESOURCE_GROUP} " +
-                   "-DappName=${AZURE_APP_NAME} " +
-                   "-Dregion='${AZURE_REGION}' " +
-                   "-Dazure.auth.type=service_principal " +
-                   "-Dazure.clientid=${AZURE_CLIENT_ID} " +
-                   "-Dazure.clientsecret=${AZURE_CLIENT_SECRET} " +
-                   "-Dazure.tenantid=${AZURE_TENANT_ID}"
-                        
+                    sh """
+                    mvn azure-webapp:deploy \
+                        -DresourceGroup=${AZURE_RESOURCE_GROUP} \
+                        -DappName=${AZURE_APP_NAME} \
+                        -Dregion=${AZURE_REGION} \
+                        -Dazure.auth.type=service_principal \
+                        -Dazure.clientid=${AZURE_CLIENT_ID} \
+                        -Dazure.clientsecret=${AZURE_CLIENT_SECRET} \
+                        -Dazure.tenantid=${AZURE_TENANT_ID} \
+                        -Dazure.subscriptionid=${AZURE_SUBSCRIPTION_ID}
+                    """
                 }
             }
         }
     }
 
-    // Acciones a realizar después de que el pipeline finaliza
     post {
         always {
             echo "Pipeline finished."
         }
         failure {
             echo "Pipeline failed. Check logs for details."
-            // Aquí podrías añadir notificaciones por correo, Slack, etc.
         }
         success {
             echo "Pipeline succeeded. Application deployed to Azure App Service."
