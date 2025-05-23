@@ -23,17 +23,17 @@ pipeline {
 
         stage('Build Application') {
             steps {
-                sh "mvn clean install -DskipTests"
+                sh "${MAVEN_HOME}/bin/mvn clean install -DskipTests"
             }
         }
 
         stage('Deploy to Azure App Service') {
             steps {
-                configFileProvider([configFile(fileId: 'azure-auth-json', targetLocation: 'azureAuth.json')]) {
+                // withCredentials inyecta las variables de entorno:
+                // AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, AZURE_TENANT_ID, AZURE_SUBSCRIPTION_ID
+                withCredentials([azureServicePrincipal('azure-service-principal')]) { // Asegúrate que 'azure-service-principal' es tu ID correcto
                     sh """
-                        mvn azure-webapp:deploy \
-                            -Dazure.auth=file \
-                            -Dazure.auth.file=azureAuth.json \
+                        ${MAVEN_HOME}/bin/mvn azure-webapp:deploy \
                             -DresourceGroup=${AZURE_RESOURCE_GROUP} \
                             -DappName=${AZURE_APP_NAME} \
                             -Dregion="${AZURE_REGION}"
