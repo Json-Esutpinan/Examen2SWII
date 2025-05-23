@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" 
+<project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -61,21 +60,17 @@
                 <version>2.11.0</version>
                 <configuration>
                     <schemaVersion>v2</schemaVersion>
+                    <authentication>
+                        <file>${project.basedir}/azureAuth.json</file>
+                    </authentication>
                     <resourceGroup>${env.AZURE_RESOURCE_GROUP}</resourceGroup>
                     <appName>${env.AZURE_APP_NAME}</appName>
-                    <region>canadacentral</region>
+                    <region>${env.AZURE_REGION}</region>
                     <runtime>
                         <os>Linux</os>
                         <javaVersion>Java 17</javaVersion>
                         <webContainer>Java SE</webContainer>
                     </runtime>
-                    <authentication>
-                        <type>service_principal</type>
-                        <clientId>${env.AZURE_CLIENT_ID}</clientId>
-                        <clientSecret>${env.AZURE_CLIENT_SECRET}</clientSecret>
-                        <tenantId>${env.AZURE_TENANT_ID}</tenantId>
-                        <subscriptionId>${env.AZURE_SUBSCRIPTION_ID}</subscriptionId>
-                    </authentication>
                     <deployment>
                         <resources>
                             <resource>
