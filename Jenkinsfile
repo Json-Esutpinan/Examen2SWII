@@ -34,7 +34,7 @@ pipeline {
                     mvn azure-webapp:deploy \
                         -DresourceGroup=${AZURE_RESOURCE_GROUP} \
                         -DappName=${AZURE_APP_NAME} \
-                        -Dregion=${AZURE_REGION} \
+                        -Dregion='${AZURE_REGION}' \
                         -Dazure.auth.type=service_principal \
                         -Dazure.clientid=${AZURE_CLIENT_ID} \
                         -Dazure.clientsecret=${AZURE_CLIENT_SECRET} \
