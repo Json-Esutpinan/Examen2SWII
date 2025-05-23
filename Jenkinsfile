@@ -33,16 +33,14 @@ pipeline {
         stage('Deploy to Azure App Service') { // Etapa para desplegar a Azure
             steps {
                 withCredentials([azureServicePrincipal('azure-service-principal')]) {
-            sh """
-                echo '{"client": {"client_id": "${AZURE_CLIENT_ID}", "client_secret": "${AZURE_CLIENT_SECRET}", "tenant_id": "${AZURE_TENANT_ID}", "subscription_id": "${AZURE_SUBSCRIPTION_ID}"}}' > azure-credentials.json
-            """
-
-            sh "${MAVEN_HOME}/bin/mvn azure-webapp:deploy " +
-               "-DresourceGroup=${AZURE_RESOURCE_GROUP} " +
-               "-DappName=${AZURE_APP_NAME} " +
-               "-Dregion='${AZURE_REGION}' " +
-               "-Dazure.auth.type=service_principal " + // Mantener este tipo de autenticación
-               "-Dazure.auth.location=azure-credentials.json" 
+                sh "${MAVEN_HOME}/bin/mvn azure-webapp:deploy " +
+                   "-DresourceGroup=${AZURE_RESOURCE_GROUP} " +
+                   "-DappName=${AZURE_APP_NAME} " +
+                   "-Dregion='${AZURE_REGION}' " +
+                   "-Dazure.auth.type=service_principal " +
+                   "-Dazure.clientid=${AZURE_CLIENT_ID} " +
+                   "-Dazure.clientsecret=${AZURE_CLIENT_SECRET} " +
+                   "-Dazure.tenantid=${AZURE_TENANT_ID}"
                         
                 }
             }
