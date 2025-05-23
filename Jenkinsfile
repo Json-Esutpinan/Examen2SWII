@@ -23,6 +23,7 @@ pipeline {
 
         stage('Build Application') {
             steps {
+                // Puedes añadir -X aquí también si quieres más depuración en el build
                 sh "${MAVEN_HOME}/bin/mvn clean install -DskipTests"
             }
         }
@@ -30,10 +31,13 @@ pipeline {
         stage('Deploy to Azure App Service') {
             steps {
                 withCredentials([azureServicePrincipal('azure-service-principal')]) {
-                    sh "${MAVEN_HOME}/bin/mvn azure-webapp:deploy " +
-                       "-DresourceGroup=${AZURE_RESOURCE_GROUP} " +
-                       "-DappName=${AZURE_APP_NAME} " +
-                       "-Dregion='${AZURE_REGION}'"
+                    sh """
+                        # Ejecutar Maven en modo depuración (-X) para obtener logs detallados
+                        ${MAVEN_HOME}/bin/mvn azure-webapp:deploy -X \
+                            -DresourceGroup=${AZURE_RESOURCE_GROUP} \
+                            -DappName=${AZURE_APP_NAME} \
+                            -Dregion="${AZURE_REGION}"
+                    """
                 }
             }
         }
