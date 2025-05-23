@@ -30,16 +30,6 @@ pipeline {
         stage('Deploy to Azure App Service') {
             steps {
                 withCredentials([azureServicePrincipal('azure-service-principal')]) {
-                    // *** PASO DE DEPURACIÓN CRÍTICO: Imprimir las variables de entorno ***
-                    sh 'echo "Debugging Azure Service Principal Variables:"'
-                    sh 'echo "AZURE_CLIENT_ID: ${AZURE_CLIENT_ID}"'
-                    sh 'echo "AZURE_CLIENT_SECRET: ${AZURE_CLIENT_SECRET+xxxxxx}"'
-                    sh 'echo "AZURE_TENANT_ID: ${AZURE_TENANT_ID}"'
-                    sh 'echo "AZURE_SUBSCRIPTION_ID: ${AZURE_SUBSCRIPTION_ID}"'
-                    sh 'echo "--- End Debugging ---"'
-
-                    // El comando de despliegue.
-                    // El plugin de Maven de Azure debería usar las variables de entorno inyectadas por withCredentials.
                     sh "${MAVEN_HOME}/bin/mvn azure-webapp:deploy " +
                        "-DresourceGroup=${AZURE_RESOURCE_GROUP} " +
                        "-DappName=${AZURE_APP_NAME} " +
