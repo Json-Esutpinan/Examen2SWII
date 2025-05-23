@@ -66,13 +66,6 @@
                         <javaVersion>Java 17</javaVersion>
                         <webContainer>Java SE</webContainer>
                     </runtime>
-                    <auth>
-                        <type>service_principal</type>
-                        <clientId>${env.AZURE_CLIENT_ID}</clientId>
-                        <clientSecret>${env.AZURE_CLIENT_SECRET}</clientSecret>
-                        <tenantId>${env.AZURE_TENANT_ID}</tenantId>
-                        <subscriptionId>${env.AZURE_SUBSCRIPTION_ID}</subscriptionId>
-                    </auth>
                     <deployment>
                         <resources>
                             <resource>
