@@ -27,7 +27,7 @@ pipeline {
 
         stage('Build Application') { // Etapa para construir la aplicación con Maven
             steps {
-                sh "${MAVEN_HOME}/bin/mvn clean install -DskipTests" // Construye el JAR, saltando los tests
+                sh "mvn clean install -DskipTests" // Construye el JAR, saltando los tests
             }
         }
 
