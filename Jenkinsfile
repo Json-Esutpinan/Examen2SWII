@@ -33,7 +33,7 @@ pipeline {
                     // *** PASO DE DEPURACIÓN CRÍTICO: Imprimir las variables de entorno ***
                     sh 'echo "Debugging Azure Service Principal Variables:"'
                     sh 'echo "AZURE_CLIENT_ID: ${AZURE_CLIENT_ID}"'
-                    sh 'echo "AZURE_CLIENT_SECRET: ${AZURE_CLIENT_SECRET != null ? "********" : "NOT_SET"}"' // No imprimir el secreto real
+                    sh 'echo "AZURE_CLIENT_SECRET: ${AZURE_CLIENT_SECRET+xxxxxx}"'
                     sh 'echo "AZURE_TENANT_ID: ${AZURE_TENANT_ID}"'
                     sh 'echo "AZURE_SUBSCRIPTION_ID: ${AZURE_SUBSCRIPTION_ID}"'
                     sh 'echo "--- End Debugging ---"'
