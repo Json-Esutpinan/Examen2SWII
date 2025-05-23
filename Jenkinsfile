@@ -34,7 +34,7 @@ pipeline {
         stage('Deploy to Azure App Service') { // Etapa para desplegar a Azure
             steps {
                 withCredentials([azureServicePrincipal('azure-service-principal')]) {
-                    sh "mvn azure-webapp:deploy -DresourceGroup=${AZURE_RESOURCE_GROUP} -DappName=${AZURE_APP_NAME} -Dregion=${AZURE_REGION} -Dazure.auth=true"
+                    sh "mvn azure-webapp:deploy -DresourceGroup=${AZURE_RESOURCE_GROUP} -DappName=${AZURE_APP_NAME} -Dregion='${AZURE_REGION}' -Dazure.auth=true"
                 }
             }
         }
