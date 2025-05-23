@@ -6,7 +6,6 @@ pipeline {
         // Asegúrate de que estos valores coincidan con tus recursos de Azure
         AZURE_RESOURCE_GROUP = 'SWII-CICD' // Reemplaza con tu grupo de recursos
         AZURE_APP_NAME = 'productosjson' // Reemplaza con el nombre de tu App Service
-        //AZURE_PRICING_TIER = 'B1' // Opcional: Ej. 'B1', 'S1', 'P1V2'. Omítelo si quieres que use el existente.
         AZURE_REGION = 'Canada Central' // Reemplaza con la región de tu App Service (ej. 'eastus', 'southcentralus')
         MAVEN_HOME = tool 'Maven' // Nombre de la instalación de Maven configurada en Jenkins Global Tool Configuration
         JAVA_HOME = tool 'JDK-17' // Nombre de la instalación de JDK 17 configurada
@@ -34,14 +33,16 @@ pipeline {
         stage('Deploy to Azure App Service') { // Etapa para desplegar a Azure
             steps {
                 withCredentials([azureServicePrincipal('azure-service-principal')]) {
-                    sh "mvn azure-webapp:deploy " +
-                   "-DresourceGroup=${AZURE_RESOURCE_GROUP} " +
-                   "-DappName=${AZURE_APP_NAME} " +
-                   "-Dregion='${AZURE_REGION}' " +
-                   "-Dazure.auth.type=service_principal " +
-                   "-Dazure.clientid=${AZURE_CLIENT_ID} " +
-                   "-Dazure.clientsecret=${AZURE_CLIENT_SECRET} " +
-                   "-Dazure.tenantid=${AZURE_TENANT_ID}"
+            sh """
+                echo '{"client": {"client_id": "${AZURE_CLIENT_ID}", "client_secret": "${AZURE_CLIENT_SECRET}", "tenant_id": "${AZURE_TENANT_ID}", "subscription_id": "${AZURE_SUBSCRIPTION_ID}"}}' > azure-credentials.json
+            """
+
+            sh "${MAVEN_HOME}/bin/mvn azure-webapp:deploy " +
+               "-DresourceGroup=${AZURE_RESOURCE_GROUP} " +
+               "-DappName=${AZURE_APP_NAME} " +
+               "-Dregion='${AZURE_REGION}' " +
+               "-Dazure.auth.type=service_principal " + // Mantener este tipo de autenticación
+               "-Dazure.auth.location=azure-credentials.json" 
                         
                 }
             }
