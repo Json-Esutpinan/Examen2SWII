@@ -2,6 +2,9 @@ pipeline {
     agent any
 
     environment {
+        // Estas variables ahora se pasarán directamente como -D al mvn,
+        // o se usarán en el pom.xml para resourceGroup, appName, region.
+        // SubscriptionId se pasa a través del archivo auth_file.
         AZURE_RESOURCE_GROUP = 'SWII-CICD'
         AZURE_APP_NAME = 'productosjson'
         AZURE_REGION = 'Canada Central'
@@ -23,20 +26,24 @@ pipeline {
 
         stage('Build Application') {
             steps {
-                // Puedes añadir -X aquí también si quieres más depuración en el build
                 sh "${MAVEN_HOME}/bin/mvn clean install -DskipTests"
             }
         }
 
         stage('Deploy to Azure App Service') {
             steps {
-                withCredentials([azureServicePrincipal('azure-service-principal')]) {
+                // Utiliza configFileProvider para inyectar el archivo JSON de credenciales
+                // 'azure-auth-json' es el ID de la "Custom file" que creaste en Jenkins
+                configFileProvider([configFile(fileId: 'azure-auth-json', targetLocation: 'azureAuth.json')]) {
                     sh """
-                        # Ejecutar Maven en modo depuración (-X) para obtener logs detallados
-                        ${MAVEN_HOME}/bin/mvn azure-webapp:deploy -X \
-                            -DresourceGroup=${AZURE_RESOURCE_GROUP} \
-                            -DappName=${AZURE_APP_NAME} \
-                            -Dregion="${AZURE_REGION}"
+                        mkdir -p "${env.HOME}/.azure"
+                        mv azureAuth.json "${env.HOME}/.azure/azureProfile.json"
+                        ${MAVEN_HOME}/bin/mvn azure-webapp:deploy -X \\
+                            -DresourceGroup=${AZURE_RESOURCE_GROUP} \\
+                            -DappName=${AZURE_APP_NAME} \\
+                            -Dregion="${AZURE_REGION}" \\
+                            -Dazure.auth.type=auth_file \\
+                            -Dazure.auth.file="${env.HOME}/.azure/azureProfile.json"
                     """
                 }
             }
