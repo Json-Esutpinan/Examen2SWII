@@ -62,17 +62,9 @@
                 <version>2.13.0</version>
                 <configuration>
                     <schemaVersion>v2</schemaVersion>
-                    <subscriptionId>${env.AZURE_SUBSCRIPTION_ID}</subscriptionId>
                     <resourceGroup>${env.AZURE_RESOURCE_GROUP}</resourceGroup>
                     <appName>${env.AZURE_APP_NAME}</appName>
                     <region>${env.AZURE_REGION}</region>
-
-                    <authentication>
-                        <type>service_principal</type>
-                        <clientId>${env.AZURE_CLIENT_ID}</clientId>
-                        <clientSecret>${env.AZURE_CLIENT_SECRET}</clientSecret>
-                        <tenantId>${env.AZURE_TENANT_ID}</tenantId>
-                    </authentication>
 
                     <runtime>
                         <os>Linux</os>
